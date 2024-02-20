@@ -11,25 +11,22 @@ router = APIRouter()
 async def read_products(
     limit: int = 100,
     skip: int = 0,
-    products: ProductRepository = Depends(get_product_repository),
-    current_user: User = Depends(get_current_user)):
+    products: ProductRepository = Depends(get_product_repository)):
     return await products.get_all(limit=limit, skip=skip)
 
 @router.post("/", response_model=Product)
 async def create_product(
     p: ProductIn,
-    products: ProductRepository = Depends(get_product_repository),
-    current_user: User = Depends(get_current_user)):
+    products: ProductRepository = Depends(get_product_repository)):
     return await products.create(p=p)
 
 @router.put("/", response_model=Product)
 async def update_product(
     id: int,
     p: ProductIn,
-    products: ProductRepository = Depends(get_product_repository),
-    current_user: User = Depends(get_current_user)):
+    products: ProductRepository = Depends(get_product_repository)):
     product = await products.get_by_id(id=id)
-    not_found_exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    not_found_exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
     if product is None:
         raise not_found_exception
 
@@ -38,10 +35,9 @@ async def update_product(
 @router.get("/product_id")
 async def read_product(
     id: int,
-    products: ProductRepository = Depends(get_product_repository),
-    current_user: User = Depends(get_current_user)):
+    products: ProductRepository = Depends(get_product_repository)):
     product = await products.get_by_id(id=id)
-    not_found_exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    not_found_exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
     if product is None:
         raise not_found_exception
 
@@ -50,18 +46,16 @@ async def read_product(
 @router.delete("/")
 async def delete_product(
     id: int,
-    products: ProductRepository = Depends(get_product_repository),
-    current_user: User = Depends(get_current_user)):
+    products: ProductRepository = Depends(get_product_repository)):
     product = await products.get_by_id(id=id)
-    not_found_exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    not_found_exception = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
     if product is None:
         raise not_found_exception
     await products.delete(id=id)
     return {"status": True}
 
-@router.delete("/all")
+@router.delete("/delete")
 async def delete_product_all(
-    products: ProductRepository = Depends(get_product_repository),
-    current_user: User = Depends(get_current_user)):
+    products: ProductRepository = Depends(get_product_repository)):
     await products.delete_all()
     return {"status": True}
